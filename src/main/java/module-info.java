@@ -10,7 +10,17 @@ module com.example.collection_board_games {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires org.mongodb.driver.sync.client;
+    requires org.mongodb.bson;
+
+
+    requires org.mongodb.driver.core;
+    requires java.net.http;
+    requires com.fasterxml.jackson.datatype.jsr310;
+    requires com.fasterxml.jackson.databind;
+
 
     opens com.example.collection_board_games to javafx.fxml;
     exports com.example.collection_board_games;
+
 }
