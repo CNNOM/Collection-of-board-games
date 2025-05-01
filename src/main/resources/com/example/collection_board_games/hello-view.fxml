@@ -69,6 +69,7 @@
             </VBox>
         </Tab>
 
+
         <!-- Добавляем новую вкладку -->
         <Tab text="Добавить игру">
             <VBox spacing="10" style="-fx-padding: 10;">
