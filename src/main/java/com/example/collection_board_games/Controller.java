@@ -33,6 +33,12 @@ public class Controller {
     @FXML private Spinner<Integer> avgTimeSpinner;
     @FXML private Label addGameStatusLabel;
 
+    @FXML private ComboBox<String> playedGameComboBox;
+    @FXML private TextField winnerField;
+    @FXML private TextField playersField;
+    @FXML private TableView<GameSession> playedGamesTable;
+    @FXML private Label playedGamesStatusLabel;
+
     @FXML
     public void initialize() {
         boardGameDao = DaoFactory.createTaskDao("mongodb");
@@ -57,6 +63,18 @@ public class Controller {
         );
         gameCategoryComboBox.setItems(categories);
         gameCategoryComboBox.getSelectionModel().selectFirst();
+
+        playedGameComboBox.setItems(FXCollections.observableArrayList(
+                allGames.stream().map(BoardGame::getName).collect(Collectors.toList())
+        ));
+
+        // Загрузка истории игр
+        loadPlayedGames();
+    }
+
+    private void loadPlayedGames() {
+        List<GameSession> sessions = boardGameDao.getGameHistory();
+        playedGamesTable.setItems(FXCollections.observableArrayList(sessions));
     }
 
     // Подбор игры для компании
@@ -70,7 +88,16 @@ public class Controller {
                 .filter(game -> game.getAverageTime() <= maxTime)
                 .collect(Collectors.toList());
 
-        gameSelectionTable.setItems(FXCollections.observableArrayList(suitableGames));
+        ObservableList<BoardGame> observableList = FXCollections.observableArrayList(suitableGames);
+        gameSelectionTable.setItems(observableList);
+
+        if (suitableGames.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Результаты поиска");
+            alert.setHeaderText(null);
+            alert.setContentText("Не найдено игр, соответствующих критериям");
+            alert.showAndWait();
+        }
     }
 
     // Ротация игр
@@ -198,7 +225,13 @@ public class Controller {
 
             boardGameDao.addGame(newGame);
 
+            // Обновляем список игр
             allGames = boardGameDao.getAllGames();
+
+            // Обновляем ComboBox в статистике
+            gamesComboBox.setItems(FXCollections.observableArrayList(
+                    allGames.stream().map(BoardGame::getName).collect(Collectors.toList())
+            ));
 
             clearAddGameForm();
             addGameStatusLabel.setText("Игра успешно добавлена!");
@@ -219,5 +252,76 @@ public class Controller {
         avgTimeSpinner.getValueFactory().setValue(60);
         gameCategoryComboBox.getSelectionModel().selectFirst();
 
+    }
+
+    @FXML
+    private void addPlayedGame() {
+        try {
+            String gameName = playedGameComboBox.getSelectionModel().getSelectedItem();
+            String winner = winnerField.getText().trim();
+            String playersText = playersField.getText().trim();
+
+            if (gameName == null || gameName.isEmpty()) {
+                showPlayedGamesError("Выберите игру");
+                return;
+            }
+
+            if (winner.isEmpty()) {
+                showPlayedGamesError("Укажите победителя");
+                return;
+            }
+
+            if (playersText.isEmpty()) {
+                showPlayedGamesError("Укажите игроков");
+                return;
+            }
+
+            List<String> players = Arrays.stream(playersText.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+
+            if (!players.contains(winner)) {
+                showPlayedGamesError("Победитель должен быть в списке игроков");
+                return;
+            }
+
+            // Находим игру в базе
+            BoardGame game = allGames.stream()
+                    .filter(g -> g.getName().equals(gameName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Игра не найдена"));
+
+            // Создаем новую сессию
+            GameSession session = new GameSession(
+                    null,
+                    game.getId(),
+                    game.getName(),
+                    LocalDate.now(),
+                    players,
+                    winner
+            );
+
+            // Сохраняем в БД
+            boardGameDao.addGameSession(session);
+
+            // Обновляем таблицу
+            loadPlayedGames();
+
+            // Очищаем поля
+            winnerField.clear();
+            playersField.clear();
+            playedGamesStatusLabel.setText("Игра успешно добавлена в историю!");
+            playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+
+        } catch (Exception e) {
+            showPlayedGamesError("Ошибка: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showPlayedGamesError(String message) {
+        playedGamesStatusLabel.setText(message);
+        playedGamesStatusLabel.setStyle("-fx-text-fill: red;");
     }
 }
