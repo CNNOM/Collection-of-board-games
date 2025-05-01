@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.collection_board_games.Controller" spacing="10"
       style="-fx-padding: 10;">
@@ -24,10 +25,31 @@
 
                 <TableView fx:id="gameSelectionTable">
                     <columns>
-                        <TableColumn text="Название" prefWidth="150"/>
-                        <TableColumn text="Мин. игроков" prefWidth="80"/>
-                        <TableColumn text="Макс. игроков" prefWidth="80"/>
-                        <TableColumn text="Время (мин)" prefWidth="100"/>
+                        <TableColumn text="Название" prefWidth="150">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Мин. игроков" prefWidth="80">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="minPlayers" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Макс. игроков" prefWidth="80">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="maxPlayers" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Время (мин)" prefWidth="100">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="averageTime" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Категория" prefWidth="120">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="category" />
+                            </cellValueFactory>
+                        </TableColumn>
                     </columns>
                 </TableView>
             </VBox>
@@ -69,7 +91,6 @@
             </VBox>
         </Tab>
 
-
         <!-- Добавляем новую вкладку -->
         <Tab text="Добавить игру">
             <VBox spacing="10" style="-fx-padding: 10;">
@@ -98,6 +119,50 @@
 
                 <Button text="Добавить игру" onAction="#addNewGame" style="-fx-font-size: 14;"/>
                 <Label fx:id="addGameStatusLabel" style="-fx-text-fill: green;"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="Сыгранные игры">
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <HBox spacing="10">
+                    <Label text="Выберите игру:"/>
+                    <ComboBox fx:id="playedGameComboBox" prefWidth="200"/>
+                    <Label text="Победитель:"/>
+                    <TextField fx:id="winnerField" prefWidth="150"/>
+                    <Button text="Добавить запись" onAction="#addPlayedGame"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="Игроки (через запятую):"/>
+                    <TextField fx:id="playersField" prefWidth="300"/>
+                </HBox>
+
+                <TableView fx:id="playedGamesTable" prefHeight="300">
+                    <columns>
+                        <TableColumn text="Дата" prefWidth="100">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="date"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Игра" prefWidth="150">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="gameName"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Игроки" prefWidth="200">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="playersAsString"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Победитель" prefWidth="100">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="winner"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+
+                <Label fx:id="playedGamesStatusLabel" style="-fx-text-fill: green;"/>
             </VBox>
         </Tab>
     </TabPane>

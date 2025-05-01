@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -14,6 +15,7 @@ import org.bson.types.ObjectId;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,10 +64,13 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
 
     @Override
     public void addGameSession(GameSession session) {
+        String playersString = String.join(", ", session.getPlayers());
+
         Document doc = new Document()
                 .append("gameId", session.getGameId())
+                .append("gameName", session.getGameName())
                 .append("date", Date.from(session.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()))
-                .append("players", session.getPlayers())
+                .append("players", playersString)
                 .append("winner", session.getWinner());
         sessionsCollection.insertOne(doc);
     }
@@ -101,19 +106,40 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
         );
     }
 
+    @Override
+    public List<GameSession> getRecentSessions(int days) {
+        LocalDate cutoffDate = LocalDate.now().minusDays(days);
+        Date cutoff = Date.from(cutoffDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return sessionsCollection.find(Filters.gte("date", cutoff))
+                .sort(Sorts.descending("date"))
+                .into(new ArrayList<>())
+                .stream()
+                .map(this::documentToGameSession)
+                .collect(Collectors.toList());
+    }
+
     private GameSession documentToGameSession(Document doc) {
         LocalDate date = doc.getDate("date").toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
+
+        // Получаем строку игроков из документа
+        String playersString = doc.getString("players");
+        // Разбиваем строку на список
+        List<String> players = Arrays.stream(playersString.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
         return new GameSession(
                 doc.getObjectId("_id").toString(),
                 doc.getString("gameId"),
+                doc.getString("gameName"),
                 date,
-                doc.getList("players", String.class),
+                players,
                 doc.getString("winner")
         );
     }
-
 
 
     @Override
