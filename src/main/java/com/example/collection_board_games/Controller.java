@@ -308,7 +308,6 @@ public class Controller {
             // Обновляем таблицу
             loadPlayedGames();
 
-            // Очищаем поля
             winnerField.clear();
             playersField.clear();
             playedGamesStatusLabel.setText("Игра успешно добавлена в историю!");

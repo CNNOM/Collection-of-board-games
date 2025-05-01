@@ -124,9 +124,7 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
-        // Получаем строку игроков из документа
         String playersString = doc.getString("players");
-        // Разбиваем строку на список
         List<String> players = Arrays.stream(playersString.split(","))
                 .map(String::trim)
                 .collect(Collectors.toList());
