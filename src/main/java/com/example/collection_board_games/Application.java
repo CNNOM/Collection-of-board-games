@@ -10,8 +10,8 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 550, 500); // Увеличим размер окна
-        stage.setTitle("Коллекция настольных игр"); // Изменим заголовок
+        Scene scene = new Scene(fxmlLoader.load(), 550, 500);
+        stage.setTitle("Коллекция настольных игр");
         stage.setScene(scene);
         stage.show();
     }

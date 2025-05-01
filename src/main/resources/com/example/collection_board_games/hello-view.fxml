@@ -8,54 +8,96 @@
       fx:controller="com.example.collection_board_games.Controller" spacing="10"
       style="-fx-padding: 10;">
 
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Тип:"/>
-        <ComboBox fx:id="storageTypeComboBox" onAction="#handleStorageChange" prefWidth="150"/>
-        <Label text="Поиск:"/>
-        <TextField fx:id="searchField" prefWidth="200"/>
-        <Button text="Поиск" onAction="#handleSearch"/>
-    </HBox>
+    <TabPane>
+        <!-- Вкладка для подбора игр -->
+        <Tab text="Подбор игры">
+            <VBox spacing="10">
+                <HBox spacing="10">
+                    <Label text="Количество игроков:"/>
+                    <Spinner fx:id="playerCountSpinner" min="1" max="10" initialValue="2"/>
 
-    <TableView fx:id="taskTable" prefHeight="300">
-        <columns>
-            <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
-            <TableColumn fx:id="titleColumn" text="название" prefWidth="150"/>
-            <TableColumn fx:id="descriptionColumn" text="описание" prefWidth="200"/>
-            <TableColumn fx:id="categoryColumn" text="категория" prefWidth="100"/>
-            <TableColumn fx:id="priorityColumn" text="приоритет" prefWidth="80"/>
-            <TableColumn fx:id="statusColumn" text="статус" prefWidth="100"/>
-            <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="100"/>
-        </columns>
-    </TableView>
+                    <Label text="Макс. время игры (мин):"/>
+                    <Spinner fx:id="gameTimeSpinner" min="15" max="240" initialValue="60"/>
 
-    <GridPane hgap="10" vgap="10">
-        <columnConstraints>
-            <ColumnConstraints prefWidth="100" halignment="RIGHT"/>
-            <ColumnConstraints prefWidth="300" halignment="LEFT"/>
-        </columnConstraints>
+                    <Button text="Найти игры" onAction="#findGamesForCompany"/>
+                </HBox>
 
-        <Label text="название:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="titleField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <TableView fx:id="gameSelectionTable">
+                    <columns>
+                        <TableColumn text="Название" prefWidth="150"/>
+                        <TableColumn text="Мин. игроков" prefWidth="80"/>
+                        <TableColumn text="Макс. игроков" prefWidth="80"/>
+                        <TableColumn text="Время (мин)" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
 
-        <Label text="описание:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextArea fx:id="descriptionField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <!-- Вкладка для ротации игр -->
+        <Tab text="Ротация игр">
+            <VBox spacing="10">
+                <HBox spacing="10">
+                    <Label text="Исключить игры, сыгранные в последние:"/>
+                    <Spinner fx:id="daysExcludeSpinner" min="1" max="30" initialValue="7"/>
+                    <Label text="дней"/>
 
-        <Label text="категория:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="categoryComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Button text="Выбрать случайную игру" onAction="#selectRandomGame"/>
+                </HBox>
 
-        <Label text="приоритет:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="priorityComboBox" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label fx:id="randomGameLabel" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+            </VBox>
+        </Tab>
 
-        <Label text="статус:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="statusComboBox" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        <!-- Вкладка для статистики побед -->
+        <Tab text="Статистика побед">
+            <VBox spacing="10">
+                <HBox spacing="10">
+                    <Label text="Игра:"/>
+                    <ComboBox fx:id="gamesComboBox" prefWidth="200"/>
 
-        <Label text="Due Date:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <DatePicker fx:id="dueDatePicker" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-    </GridPane>
+                    <Button text="Показать статистику" onAction="#showWinStatistics"/>
+                </HBox>
 
-    <HBox spacing="10" alignment="CENTER">
-        <Button text="Add" onAction="#handleAddTask" prefWidth="80"/>
-        <Button text="Update" onAction="#handleUpdateTask" prefWidth="80"/>
-        <Button text="Delete" prefWidth="80"/>
-    </HBox>
+                <TableView fx:id="winStatsTable">
+                    <columns>
+                        <TableColumn text="Игрок" prefWidth="150"/>
+                        <TableColumn text="Победы" prefWidth="80"/>
+                        <TableColumn text="Всего игр" prefWidth="80"/>
+                        <TableColumn text="Процент побед" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- Добавляем новую вкладку -->
+        <Tab text="Добавить игру">
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <GridPane hgap="10" vgap="10">
+                    <Label text="Название:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="gameNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Описание:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextArea fx:id="gameDescriptionField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Категория:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="gameCategoryComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="Минимум игроков:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Spinner fx:id="minPlayersSpinner" min="1" max="20" initialValue="2"
+                             GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <Label text="Максимум игроков:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <Spinner fx:id="maxPlayersSpinner" min="1" max="20" initialValue="4"
+                             GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                    <Label text="Среднее время (мин):" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                    <Spinner fx:id="avgTimeSpinner" min="10" max="300" initialValue="60"
+                             GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Button text="Добавить игру" onAction="#addNewGame" style="-fx-font-size: 14;"/>
+                <Label fx:id="addGameStatusLabel" style="-fx-text-fill: green;"/>
+            </VBox>
+        </Tab>
+    </TabPane>
 </VBox>
