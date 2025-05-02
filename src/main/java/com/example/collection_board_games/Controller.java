@@ -133,6 +133,8 @@ public class Controller {
             return;
         }
 
+        List<GameSession> currentGameHistory = boardGameDao.getGameHistory();
+
         BoardGame game = allGames.stream()
                 .filter(g -> g.getName().equals(gameName))
                 .findFirst()
@@ -140,33 +142,34 @@ public class Controller {
 
         if (game == null) return;
 
-        Map<String, PlayerStats> statsMap = new HashMap<>();
-
-        List<GameSession> gameSessions = gameHistory.stream()
-                .filter(session -> session.getGameId() == game.getId())
+        List<GameSession> gameSessions = currentGameHistory.stream()
+                .filter(session -> session.getGameId().equals(game.getId()))
                 .collect(Collectors.toList());
+
+        Map<String, PlayerStats> statsMap = new HashMap<>();
 
         for (GameSession session : gameSessions) {
             for (String player : session.getPlayers()) {
-                PlayerStats stats = statsMap.getOrDefault(player, new PlayerStats(player));
+                PlayerStats stats = statsMap.computeIfAbsent(player, PlayerStats::new);
                 stats.setTotalGames(stats.getTotalGames() + 1);
-                statsMap.put(player, stats);
             }
 
             if (session.getWinner() != null && !session.getWinner().isEmpty()) {
-                PlayerStats winnerStats = statsMap.getOrDefault(session.getWinner(), new PlayerStats(session.getWinner()));
+                PlayerStats winnerStats = statsMap.computeIfAbsent(session.getWinner(), PlayerStats::new);
                 winnerStats.setWins(winnerStats.getWins() + 1);
-                statsMap.put(session.getWinner(), winnerStats);
             }
         }
 
         ObservableList<PlayerStats> statsList = FXCollections.observableArrayList();
         for (PlayerStats stats : statsMap.values()) {
             if (stats.getTotalGames() > 0) {
-                stats.setWinPercentage((double) stats.getWins() / stats.getTotalGames() * 100);
+                double winPercentage = (double) stats.getWins() / stats.getTotalGames() * 100;
+                stats.setWinPercentage(Math.round(winPercentage * 100.0) / 100.0);
             }
             statsList.add(stats);
         }
+
+        statsList.sort((s1, s2) -> Integer.compare(s2.getWins(), s1.getWins()));
 
         winStatsTable.setItems(statsList);
     }

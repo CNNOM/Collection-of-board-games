@@ -30,18 +30,4 @@ public class BoardGame {
     public String getCategory() { return category.get(); }
     public String getId() { return id.get(); }
     public String getDescription() { return description.get(); }
-
-    public void setName(String name) { this.name.set(name); }
-    public void setMinPlayers(int minPlayers) { this.minPlayers.set(minPlayers); }
-    public void setMaxPlayers(int maxPlayers) { this.maxPlayers.set(maxPlayers); }
-    public void setAverageTime(int averageTime) { this.averageTime.set(averageTime); }
-    public void setCategory(String category) { this.category.set(category); }
-    public void setId(String id) { this.id.set(id); }
-    public void setDescription(String description) { this.description.set(description); }
-
-    public SimpleStringProperty nameProperty() { return name; }
-    public SimpleIntegerProperty minPlayersProperty() { return minPlayers; }
-    public SimpleIntegerProperty maxPlayersProperty() { return maxPlayers; }
-    public SimpleIntegerProperty averageTimeProperty() { return averageTime; }
-    public SimpleStringProperty categoryProperty() { return category; }
 }

@@ -96,10 +96,26 @@
 
                         <TableView fx:id="winStatsTable" style="-fx-font-size: 14px;">
                             <columns>
-                                <TableColumn text="Игрок" prefWidth="150" style="-fx-font-weight: bold;"/>
-                                <TableColumn text="Победы" prefWidth="80" style="-fx-font-weight: bold;"/>
-                                <TableColumn text="Всего игр" prefWidth="80" style="-fx-font-weight: bold;"/>
-                                <TableColumn text="Процент побед" prefWidth="100" style="-fx-font-weight: bold;"/>
+                                <TableColumn text="Игрок" prefWidth="150" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="playerName"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Победы" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="wins"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Всего игр" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="totalGames"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Процент побед" prefWidth="150" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="winPercentage"/>
+                                    </cellValueFactory>
+                                </TableColumn>
                             </columns>
                         </TableView>
                     </VBox>
@@ -168,14 +184,14 @@
                                         <PropertyValueFactory property="gameName"/>
                                     </cellValueFactory>
                                 </TableColumn>
-                                <TableColumn text="Игроки" prefWidth="200" style="-fx-font-weight: bold;">
-                                    <cellValueFactory>
-                                        <PropertyValueFactory property="playersAsString"/>
-                                    </cellValueFactory>
-                                </TableColumn>
                                 <TableColumn text="Победитель" prefWidth="100" style="-fx-font-weight: bold;">
                                     <cellValueFactory>
                                         <PropertyValueFactory property="winner"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Игроки" prefWidth="350" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="playersAsString"/>
                                     </cellValueFactory>
                                 </TableColumn>
                             </columns>
