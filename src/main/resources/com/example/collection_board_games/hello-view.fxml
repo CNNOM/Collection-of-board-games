@@ -3,167 +3,188 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.collection_board_games.Controller" spacing="10"
-      style="-fx-padding: 10;">
+      fx:controller="com.example.collection_board_games.Controller" spacing="20"
+      style="-fx-padding: 20; -fx-background-color: #f5f7fa;">
 
-    <TabPane>
-        <!-- Вкладка для подбора игр -->
-        <Tab text="Подбор игры">
-            <VBox spacing="10">
-                <HBox spacing="10">
-                    <Label text="Количество игроков:"/>
-                    <Spinner fx:id="playerCountSpinner" min="1" max="10" initialValue="2"/>
+    <TabPane style="-fx-background-color: transparent; -fx-tab-min-height: 40;">
+        <tabs>
+            <!-- Вкладка для подбора игр -->
+            <Tab text="Подбор игры">
+                <content>
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Количество игроков:" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="playerCountSpinner" min="1" max="10" initialValue="2"
+                                     style="-fx-font-size: 14px;"/>
 
-                    <Label text="Макс. время игры (мин):"/>
-                    <Spinner fx:id="gameTimeSpinner" min="15" max="240" initialValue="60"/>
+                            <Label text="Макс. время игры (мин):" style="-fx-font-weight: bold; -fx-padding: 0 0 0 20;"/>
+                            <Spinner fx:id="gameTimeSpinner" min="15" max="240" initialValue="60"
+                                     style="-fx-font-size: 14px;"/>
 
-                    <Button text="Найти игры" onAction="#findGamesForCompany"/>
-                </HBox>
+                            <Button text="Найти игры" onAction="#findGamesForCompany"
+                                    style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5;"/>
+                        </HBox>
 
-                <TableView fx:id="gameSelectionTable">
-                    <columns>
-                        <TableColumn text="Название" prefWidth="150">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="name" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Мин. игроков" prefWidth="80">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="minPlayers" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Макс. игроков" prefWidth="80">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="maxPlayers" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Время (мин)" prefWidth="100">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="averageTime" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Категория" prefWidth="120">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="category" />
-                            </cellValueFactory>
-                        </TableColumn>
-                    </columns>
-                </TableView>
-            </VBox>
-        </Tab>
+                        <TableView fx:id="gameSelectionTable" style="-fx-font-size: 14px;">
+                            <columns>
+                                <TableColumn text="Название" prefWidth="200" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="name" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Мин. игроков" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="minPlayers" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Макс. игроков" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="maxPlayers" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Время (мин)" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="averageTime" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Категория" prefWidth="150" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="category" />
+                                    </cellValueFactory>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </content>
+            </Tab>
 
-        <!-- Вкладка для ротации игр -->
-        <Tab text="Ротация игр">
-            <VBox spacing="10">
-                <HBox spacing="10">
-                    <Label text="Исключить игры, сыгранные в последние:"/>
-                    <Spinner fx:id="daysExcludeSpinner" min="1" max="30" initialValue="7"/>
-                    <Label text="дней"/>
+            <!-- Вкладка для ротации игр -->
+            <Tab text="Ротация игр">
+                <content>
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Исключить игры, сыгранные в последние:" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="daysExcludeSpinner" min="1" max="30" initialValue="1"
+                                     style="-fx-font-size: 14px;"/>
+                            <Label text="дней" style="-fx-font-weight: bold;"/>
 
-                    <Button text="Выбрать случайную игру" onAction="#selectRandomGame"/>
-                </HBox>
+                            <Button text="Выбрать случайную игру" onAction="#selectRandomGame"
+                                    style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
+                        </HBox>
 
-                <Label fx:id="randomGameLabel" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
-            </VBox>
-        </Tab>
+                        <Label fx:id="randomGameLabel"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e74c3c; -fx-padding: 10 0 0 0;"/>
+                    </VBox>
+                </content>
+            </Tab>
 
-        <!-- Вкладка для статистики побед -->
-        <Tab text="Статистика побед">
-            <VBox spacing="10">
-                <HBox spacing="10">
-                    <Label text="Игра:"/>
-                    <ComboBox fx:id="gamesComboBox" prefWidth="200"/>
+            <!-- Вкладка для статистики побед -->
+            <Tab text="Статистика побед">
+                <content>
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Игра:" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="gamesComboBox" prefWidth="200" style="-fx-font-size: 14px;"/>
 
-                    <Button text="Показать статистику" onAction="#showWinStatistics"/>
-                </HBox>
+                            <Button text="Показать статистику" onAction="#showWinStatistics"
+                                    style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
+                        </HBox>
 
-                <TableView fx:id="winStatsTable">
-                    <columns>
-                        <TableColumn text="Игрок" prefWidth="150"/>
-                        <TableColumn text="Победы" prefWidth="80"/>
-                        <TableColumn text="Всего игр" prefWidth="80"/>
-                        <TableColumn text="Процент побед" prefWidth="100"/>
-                    </columns>
-                </TableView>
-            </VBox>
-        </Tab>
+                        <TableView fx:id="winStatsTable" style="-fx-font-size: 14px;">
+                            <columns>
+                                <TableColumn text="Игрок" prefWidth="150" style="-fx-font-weight: bold;"/>
+                                <TableColumn text="Победы" prefWidth="80" style="-fx-font-weight: bold;"/>
+                                <TableColumn text="Всего игр" prefWidth="80" style="-fx-font-weight: bold;"/>
+                                <TableColumn text="Процент побед" prefWidth="100" style="-fx-font-weight: bold;"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </content>
+            </Tab>
 
-        <!-- Добавляем новую вкладку -->
-        <Tab text="Добавить игру">
-            <VBox spacing="10" style="-fx-padding: 10;">
-                <GridPane hgap="10" vgap="10">
-                    <Label text="Название:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="gameNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <!-- Вкладка для добавления игры -->
+            <Tab text="Добавить игру">
+                <content>
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                        <GridPane hgap="10" vgap="10">
+                            <Label text="Название:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="gameNameField" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px;"/>
 
-                    <Label text="Описание:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <TextArea fx:id="gameDescriptionField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Описание:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="gameDescriptionField" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-font-size: 14px;"/>
 
-                    <Label text="Категория:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <ComboBox fx:id="gameCategoryComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="Категория:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="gameCategoryComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-font-size: 14px;"/>
 
-                    <Label text="Минимум игроков:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Spinner fx:id="minPlayersSpinner" min="1" max="20" initialValue="2"
-                             GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            <Label text="Минимум игроков:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="minPlayersSpinner" min="1" max="20" initialValue="2" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-font-size: 14px;"/>
 
-                    <Label text="Максимум игроков:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                    <Spinner fx:id="maxPlayersSpinner" min="1" max="20" initialValue="4"
-                             GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                            <Label text="Максимум игроков:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="maxPlayersSpinner" min="1" max="20" initialValue="4" GridPane.rowIndex="4" GridPane.columnIndex="1" style="-fx-font-size: 14px;"/>
 
-                    <Label text="Среднее время (мин):" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                    <Spinner fx:id="avgTimeSpinner" min="10" max="300" initialValue="60"
-                             GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-                </GridPane>
+                            <Label text="Среднее время (мин):" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                            <Spinner fx:id="avgTimeSpinner" min="10" max="300" initialValue="60" GridPane.rowIndex="5" GridPane.columnIndex="1" style="-fx-font-size: 14px;"/>
+                        </GridPane>
 
-                <Button text="Добавить игру" onAction="#addNewGame" style="-fx-font-size: 14;"/>
-                <Label fx:id="addGameStatusLabel" style="-fx-text-fill: green;"/>
-            </VBox>
-        </Tab>
+                        <Button text="Добавить игру" onAction="#addNewGame"
+                                style="-fx-font-size: 14px; -fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+                        <Label fx:id="addGameStatusLabel" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
+                    </VBox>
+                </content>
+            </Tab>
 
-        <Tab text="Сыгранные игры">
-            <VBox spacing="10" style="-fx-padding: 10;">
-                <HBox spacing="10">
-                    <Label text="Выберите игру:"/>
-                    <ComboBox fx:id="playedGameComboBox" prefWidth="200"/>
-                    <Label text="Победитель:"/>
-                    <TextField fx:id="winnerField" prefWidth="150"/>
-                    <Button text="Добавить запись" onAction="#addPlayedGame"/>
-                </HBox>
+            <!-- Вкладка для сыгранных игр -->
+            <Tab text="Сыгранные игры">
+                <content>
+                    <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Выберите игру:" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="playedGameComboBox" prefWidth="200" style="-fx-font-size: 14px;"/>
+                            <Label text="Победитель:" style="-fx-font-weight: bold; -fx-padding: 0 0 0 20;"/>
+                            <TextField fx:id="winnerField" prefWidth="150" style="-fx-font-size: 14px;"/>
 
-                <HBox spacing="10">
-                    <Label text="Игроки (через запятую):"/>
-                    <TextField fx:id="playersField" prefWidth="300"/>
-                </HBox>
+                            <Button text="Добавить запись" onAction="#addPlayedGame"
+                                    style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
+                        </HBox>
 
-                <TableView fx:id="playedGamesTable" prefHeight="300">
-                    <columns>
-                        <TableColumn text="Дата" prefWidth="100">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="date"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Игра" prefWidth="150">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="gameName"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Игроки" prefWidth="200">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="playersAsString"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Победитель" prefWidth="100">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="winner"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                    </columns>
-                </TableView>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Игроки (через запятую):" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="playersField" prefWidth="300" style="-fx-font-size: 14px;"/>
+                        </HBox>
 
-                <Label fx:id="playedGamesStatusLabel" style="-fx-text-fill: green;"/>
-            </VBox>
-        </Tab>
+                        <TableView fx:id="playedGamesTable" prefHeight="300" style="-fx-font-size: 14px;">
+                            <columns>
+                                <TableColumn text="Дата" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="date"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Игра" prefWidth="150" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="gameName"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Игроки" prefWidth="200" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="playersAsString"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn text="Победитель" prefWidth="100" style="-fx-font-weight: bold;">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="winner"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+
+                        <Label fx:id="playedGamesStatusLabel" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
+                    </VBox>
+                </content>
+            </Tab>
+        </tabs>
     </TabPane>
 </VBox>

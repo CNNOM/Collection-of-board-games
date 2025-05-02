@@ -107,7 +107,7 @@ public class Controller {
         LocalDate excludeAfter = LocalDate.now().minusDays(daysToExclude);
 
         Set<String> recentlyPlayed = gameHistory.stream()
-                .filter(session -> session.getDate().isAfter(excludeAfter))
+                .filter(session -> !session.getDate().isBefore(excludeAfter))
                 .map(GameSession::getGameId)
                 .collect(Collectors.toSet());
 
