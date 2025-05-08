@@ -38,12 +38,12 @@ public class BoardGameService {
                 .collect(Collectors.toList());
     }
 
-    public List<BoardGame> getRecentlyPlayedGames(int days) {
-        LocalDate cutoffDate = LocalDate.now().minusDays(days);
-        return boardGameDao.getGameHistory().stream()
-                .filter(session -> session.getDate().isAfter(cutoffDate))
-                .map(session -> boardGameDao.getGameById(session.getGameId()))
-                .distinct()
-                .collect(Collectors.toList());
-    }
+//    public List<BoardGame> getRecentlyPlayedGames(int days) {
+//        LocalDate cutoffDate = LocalDate.now().minusDays(days);
+//        return boardGameDao.getGameHistory().stream()
+//                .filter(session -> session.getDate().isAfter(cutoffDate))
+//                .map(session -> boardGameDao.getGameById(session.getGameId()))
+//                .distinct()
+//                .collect(Collectors.toList());
+//    }
 }

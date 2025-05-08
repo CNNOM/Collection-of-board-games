@@ -181,9 +181,9 @@
 
                         <TableView fx:id="playedGamesTable" prefHeight="300" style="-fx-font-size: 14px;">
                             <columns>
-                                <TableColumn text="Дата" prefWidth="100" style="-fx-font-weight: bold;">
+                                <TableColumn text="Дата и время" prefWidth="250" style="-fx-font-weight: bold;">
                                     <cellValueFactory>
-                                        <PropertyValueFactory property="date"/>
+                                        <PropertyValueFactory property="dateTime"/>
                                     </cellValueFactory>
                                 </TableColumn>
                                 <TableColumn text="Игра" prefWidth="150" style="-fx-font-weight: bold;">

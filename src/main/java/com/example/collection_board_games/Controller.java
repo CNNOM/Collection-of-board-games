@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,10 +79,12 @@ public class Controller {
     private void loadPlayedGames() {
         List<GameSession> sessions = boardGameDao.getGameHistory();
 
-        sessions.sort((s1, s2) -> s2.getDate().compareTo(s1.getDate()));
+        // Сортировка сессий по дате и времени в порядке убывания
+        sessions.sort((s1, s2) -> s2.getDateTime().compareTo(s1.getDateTime()));
 
         playedGamesTable.setItems(FXCollections.observableArrayList(sessions));
     }
+
 
 
     // Подбор игры для компании
@@ -114,7 +117,7 @@ public class Controller {
         LocalDate excludeAfter = LocalDate.now().minusDays(daysToExclude);
 
         Set<String> recentlyPlayed = gameHistory.stream()
-                .filter(session -> !session.getDate().isBefore(excludeAfter))
+                .filter(session -> !session.getDateTime().toLocalDate().isBefore(excludeAfter))
                 .map(GameSession::getGameId)
                 .collect(Collectors.toSet());
 
@@ -302,15 +305,15 @@ public class Controller {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Игра не найдена"));
 
-            // Создаем новую сессию с статусом "в игре"
+            // Создаем новую сессию с текущей датой и временем
             GameSession session = new GameSession(
                     null,
                     game.getId(),
                     game.getName(),
-                    LocalDate.now(),
+                    LocalDateTime.now(),  // Используем LocalDateTime.now()
                     players,
                     winner,
-                    GameSession.GameStatus.IN_PROGRESS  // Установка статуса IN_PROGRESS
+                    GameSession.GameStatus.IN_PROGRESS
             );
 
             // Сохраняем в БД
@@ -343,7 +346,7 @@ public class Controller {
 
             // Обновляем статус для игр, которые сыграны больше суток назад
             for (GameSession session : sessions) {
-                if (session.getDate().isBefore(LocalDate.now().minusDays(1)) && session.getStatus() != GameSession.GameStatus.PLAYED) {
+                if (session.getDateTime().toLocalDate().isBefore(LocalDate.now().minusDays(1)) && session.getStatus() != GameSession.GameStatus.PLAYED) {
                     session.setStatus(GameSession.GameStatus.PLAYED);
                     boardGameDao.updateGameSessionStatus(session);
                 }

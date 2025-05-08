@@ -13,6 +13,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,16 +69,20 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
     public void addGameSession(GameSession session) {
         String playersString = String.join(", ", session.getPlayers());
 
+        // Преобразуем LocalDateTime в Date для сохранения в MongoDB
+        Date date = Date.from(session.getDateTime().atZone(ZoneId.systemDefault()).toInstant());
+
         Document doc = new Document()
                 .append("gameId", session.getGameId())
                 .append("gameName", session.getGameName())
-                .append("date", Date.from(session.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .append("date", date)  // Сохраняем дату и время
                 .append("players", playersString)
                 .append("winner", session.getWinner())
                 .append("status", session.getStatus().toString());
 
         sessionsCollection.insertOne(doc);
     }
+
 
     @Override
     public List<BoardGame> findGamesByPlayersAndTime(int players, int maxTime) {
@@ -123,30 +128,9 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
                 .collect(Collectors.toList());
     }
 
-    private GameSession documentToGameSession(Document doc) {
-        LocalDate date = doc.getDate("date").toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
 
-        String playersString = doc.getString("players");
-        List<String> players = Arrays.stream(playersString.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
 
-        // Получение статуса или установка значения по умолчанию, если его нет
-        String statusString = doc.getString("status");
-        GameSession.GameStatus status = (statusString != null) ? GameSession.GameStatus.valueOf(statusString) : GameSession.GameStatus.PLAYED;
 
-        return new GameSession(
-                doc.getObjectId("_id").toString(),
-                doc.getString("gameId"),
-                doc.getString("gameName"),
-                date,
-                players,
-                doc.getString("winner"),
-                status
-        );
-    }
 
 
 
@@ -180,6 +164,30 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
                 .append("status", session.getStatus().toString()));
 
         sessionsCollection.updateOne(Filters.eq("_id", new ObjectId(session.getId())), update);
+    }
+    private GameSession documentToGameSession(Document doc) {
+        LocalDateTime dateTime = doc.getDate("date").toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();  // Извлекаем дату и время
+
+        String playersString = doc.getString("players");
+        List<String> players = Arrays.stream(playersString.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
+        // Получение статуса или установка значения по умолчанию, если его нет
+        String statusString = doc.getString("status");
+        GameSession.GameStatus status = (statusString != null) ? GameSession.GameStatus.valueOf(statusString) : GameSession.GameStatus.PLAYED;
+
+        return new GameSession(
+                doc.getObjectId("_id").toString(),
+                doc.getString("gameId"),
+                doc.getString("gameName"),
+                dateTime,  // Передаем LocalDateTime
+                players,
+                doc.getString("winner"),
+                status
+        );
     }
 
 }
