@@ -175,6 +175,8 @@
                                     style="-fx-font-size: 14px; -fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 10;"/>
                         </HBox>
 
+
+
                         <!-- Остальная часть вкладки (существующие элементы) -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label text="Выберите игру:" style="-fx-font-weight: bold;"/>
@@ -233,4 +235,15 @@
             </Tab>
         </tabs>
     </TabPane>
+    <fx:define>
+        <ToggleGroup fx:id="dataSourceToggleGroup"/>
+    </fx:define>
+
+    <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+        <Label text="Источник данных:" style="-fx-font-weight: bold;"/>
+        <RadioButton text="MongoDB" toggleGroup="$dataSourceToggleGroup" selected="true" userData="mongodb"/>
+        <RadioButton text="JSON" toggleGroup="$dataSourceToggleGroup" userData="json"/>
+        <Button text="Применить" onAction="#changeDataSource"/>
+    </HBox>
+
 </VBox>

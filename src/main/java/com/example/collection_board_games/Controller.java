@@ -46,8 +46,13 @@ public class Controller {
     @FXML private ComboBox<GameSession.GameStatus> filterStatusComboBox;
 
     @FXML
+    private ToggleGroup dataSourceToggleGroup;
+
+    @FXML
     public void initialize() {
         boardGameDao = DaoFactory.createTaskDao("mongodb");
+
+        gameHistory = boardGameDao.getGameHistory();
         allGames = boardGameDao.getAllGames();
         gameHistory = boardGameDao.getGameHistory();
 
@@ -475,5 +480,56 @@ public class Controller {
         loadPlayedGames();
     }
 
+    @FXML
+    private void changeDataSource() {
+        try {
+            String selectedSource = dataSourceToggleGroup.getSelectedToggle().getUserData().toString();
+            boardGameDao = DaoFactory.createTaskDao(selectedSource);
+
+            // Перезагружаем все данные
+            reloadAllData();
+
+            // Показываем сообщение об успехе
+            showAlert(Alert.AlertType.INFORMATION, "Источник данных изменен",
+                    "Теперь используется: " + (selectedSource.equals("mongodb") ? "MongoDB" : "JSON"));
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Ошибка",
+                    "Не удалось изменить источник данных: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void reloadAllData() {
+        // Обновляем все данные из нового источника
+        allGames = boardGameDao.getAllGames();
+        gameHistory = boardGameDao.getGameHistory();
+
+        // Обновляем ComboBox с играми
+        gamesComboBox.setItems(FXCollections.observableArrayList(
+                allGames.stream().map(BoardGame::getName).collect(Collectors.toList()))
+        );
+
+        // Обновляем ComboBox в разделе сыгранных игр
+        playedGameComboBox.setItems(FXCollections.observableArrayList(
+                allGames.stream().map(BoardGame::getName).collect(Collectors.toList())));
+
+        // Обновляем фильтры
+        filterGameComboBox.setItems(FXCollections.observableArrayList(
+                allGames.stream().map(BoardGame::getName).collect(Collectors.toList())));
+        filterGameComboBox.getItems().add(0, "Все игры");
+        filterGameComboBox.getSelectionModel().selectFirst();
+
+        // Обновляем таблицы
+        loadPlayedGames();
+        showWinStatistics(); // Обновляем статистику, если она была открыта
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 }

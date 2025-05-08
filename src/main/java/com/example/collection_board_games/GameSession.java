@@ -1,6 +1,8 @@
 package com.example.collection_board_games;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,13 +14,24 @@ public class GameSession {
     private String id;
     private String gameId;
     private String gameName;
-    private LocalDateTime dateTime;  // Используем LocalDateTime вместо LocalDate
+    private LocalDateTime dateTime;
     private List<String> players;
     private String winner;
     private GameStatus status;
 
-    public GameSession(String id, String gameId, String gameName, LocalDateTime dateTime,
-                       List<String> players, String winner, GameStatus status) {
+    // Пустой конструктор для Jackson
+    public GameSession() {}
+
+    // Основной конструктор (можно использовать @JsonCreator, если хотите только его)
+    @JsonCreator
+    public GameSession(
+            @JsonProperty("id") String id,
+            @JsonProperty("gameId") String gameId,
+            @JsonProperty("gameName") String gameName,
+            @JsonProperty("dateTime") LocalDateTime dateTime,
+            @JsonProperty("players") List<String> players,
+            @JsonProperty("winner") String winner,
+            @JsonProperty("status") GameStatus status) {
         this.id = id;
         this.gameId = gameId;
         this.gameName = gameName;
@@ -28,17 +41,37 @@ public class GameSession {
         this.status = status;
     }
 
+    // Геттеры
     public String getId() { return id; }
     public String getGameId() { return gameId; }
     public String getGameName() { return gameName; }
-    public LocalDateTime getDateTime() { return dateTime; }  // Используем LocalDateTime
+    public LocalDateTime getDateTime() { return dateTime; }
     public List<String> getPlayers() { return players; }
     public String getWinner() { return winner; }
     public GameStatus getStatus() { return status; }
+
+    // Сеттеры
+    public void setId(String id) { this.id = id; }
+    public void setGameId(String gameId) { this.gameId = gameId; }
+    public void setGameName(String gameName) { this.gameName = gameName; }
+    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+    public void setPlayers(List<String> players) { this.players = players; }
+    public void setWinner(String winner) { this.winner = winner; }
     public void setStatus(GameStatus status) { this.status = status; }
 
+    // Дополнительные методы
     public String getPlayersAsString() {
-        return String.join(", ", players);
+        return players != null ? String.join(", ", players) : "";
+    }
+
+    @Override
+    public String toString() {
+        return "GameSession{" +
+                "id='" + id + '\'' +
+                ", gameName='" + gameName + '\'' +
+                ", dateTime=" + dateTime +
+                ", winner='" + winner + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
-

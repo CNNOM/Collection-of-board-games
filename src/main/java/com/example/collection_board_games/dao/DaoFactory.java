@@ -10,8 +10,8 @@ public class DaoFactory {
                         "mongodb://localhost:27017/board_games",
                         "boardgames",
                         "tasks");
-//            case "json":
-//                return new BoardGameDaoJsonImpl("data/tasks.json");
+            case "json":
+                return new BoardGameDaoJsonImpl("data");
             default:
                 throw new IllegalArgumentException("Unknown DAO type: " + type);
         }
