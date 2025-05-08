@@ -72,7 +72,7 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
                 .append("date", Date.from(session.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .append("players", playersString)
                 .append("winner", session.getWinner())
-                .append("status", session.getStatus().toString()); // Добавление статуса в документ
+                .append("status", session.getStatus().toString());
 
         sessionsCollection.insertOne(doc);
     }
@@ -171,4 +171,13 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
         Document doc = gamesCollection.find(Filters.eq("_id", new ObjectId(id))).first();
         return documentToBoardGame(doc);
     }
+
+    @Override
+    public void updateGameSessionStatus(GameSession session) {
+        Document update = new Document("$set", new Document()
+                .append("status", session.getStatus().toString()));
+
+        sessionsCollection.updateOne(Filters.eq("_id", new ObjectId(session.getId())), update);
+    }
+
 }

@@ -165,7 +165,14 @@
 
                             <Button text="Добавить запись" onAction="#addPlayedGame"
                                     style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
+
+                            <Button text="Обновить статусы" onAction="#updateGameStatuses"
+                                    style="-fx-font-size: 14px; -fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
+
+                            <Button text="Редактировать статусы" onAction="#editGameStatuses"
+                                    style="-fx-font-size: 14px; -fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
                         </HBox>
+
 
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label text="Игроки (через запятую):" style="-fx-font-weight: bold;"/>

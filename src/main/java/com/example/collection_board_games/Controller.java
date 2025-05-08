@@ -70,6 +70,9 @@ public class Controller {
 
         // Загрузка истории игр
         loadPlayedGames();
+
+        // Автоматическое обновление статусов
+        updateGameStatuses();
     }
 
     private void loadPlayedGames() {
@@ -327,4 +330,68 @@ public class Controller {
         playedGamesStatusLabel.setText(message);
         playedGamesStatusLabel.setStyle("-fx-text-fill: red;");
     }
+
+    @FXML
+    private void updateGameStatuses() {
+        try {
+            // Получаем все сессии игр
+            List<GameSession> sessions = boardGameDao.getGameHistory();
+
+            // Обновляем статус для игр, которые сыграны больше суток назад
+            for (GameSession session : sessions) {
+                if (session.getDate().isBefore(LocalDate.now().minusDays(1)) && session.getStatus() != GameSession.GameStatus.PLAYED) {
+                    session.setStatus(GameSession.GameStatus.PLAYED);
+                    boardGameDao.updateGameSessionStatus(session);
+                }
+            }
+
+            // Обновляем таблицу
+            loadPlayedGames();
+
+            // Устанавливаем сообщение об успешном обновлении
+            playedGamesStatusLabel.setText("Статусы игр успешно обновлены!");
+            playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+
+        } catch (Exception e) {
+            showPlayedGamesError("Ошибка при обновлении статусов: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void editGameStatuses() {
+        try {
+            // Получаем выбранную сессию из таблицы
+            GameSession selectedSession = playedGamesTable.getSelectionModel().getSelectedItem();
+            if (selectedSession == null) {
+                showPlayedGamesError("Выберите сессию для редактирования");
+                return;
+            }
+
+            // Создаем диалог для выбора нового статуса
+            ChoiceDialog<GameSession.GameStatus> dialog = new ChoiceDialog<>(selectedSession.getStatus(), GameSession.GameStatus.values());
+            dialog.setTitle("Редактирование статуса");
+            dialog.setHeaderText("Выберите новый статус для сессии");
+            dialog.setContentText("Статус:");
+
+            // Показываем диалог и ждем выбора пользователя
+            Optional<GameSession.GameStatus> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                selectedSession.setStatus(result.get());
+                boardGameDao.updateGameSessionStatus(selectedSession);
+
+                // Обновляем таблицу
+                loadPlayedGames();
+
+                // Устанавливаем сообщение об успешном обновлении
+                playedGamesStatusLabel.setText("Статус сессии успешно обновлен!");
+                playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+            }
+        } catch (Exception e) {
+            showPlayedGamesError("Ошибка при редактировании статуса: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
 }

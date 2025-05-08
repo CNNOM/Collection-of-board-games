@@ -15,6 +15,7 @@ public interface BoardGameDao extends AutoCloseable {
     List<GameSession> getGameHistory();
     void addGameSession(GameSession session);
     List<GameSession> getRecentSessions(int days);
+    void updateGameSessionStatus(GameSession session);
 
     void close();
 }
