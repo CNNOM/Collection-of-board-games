@@ -27,25 +27,16 @@ public class GameSession {
         this.status = status;
     }
 
-    public String getPlayersAsString() {
-        return String.join(", ", players);
-    }
-
-    public List<String> getPlayers() {
-        return players;
-    }
-
     public String getId() { return id; }
     public String getGameId() { return gameId; }
     public String getGameName() { return gameName; }
     public LocalDate getDate() { return date; }
+    public List<String> getPlayers() { return players; }
     public String getWinner() { return winner; }
+    public GameStatus getStatus() { return status; }
+    public void setStatus(GameStatus status) { this.status = status; }
 
-    public GameStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(GameStatus status) {
-        this.status = status;
+    public String getPlayersAsString() {
+        return String.join(", ", players);
     }
 }

@@ -77,8 +77,12 @@ public class Controller {
 
     private void loadPlayedGames() {
         List<GameSession> sessions = boardGameDao.getGameHistory();
+
+        sessions.sort((s1, s2) -> s2.getDate().compareTo(s1.getDate()));
+
         playedGamesTable.setItems(FXCollections.observableArrayList(sessions));
     }
+
 
     // Подбор игры для компании
     @FXML
@@ -298,7 +302,7 @@ public class Controller {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Игра не найдена"));
 
-            // Создаем новую сессию
+            // Создаем новую сессию с статусом "в игре"
             GameSession session = new GameSession(
                     null,
                     game.getId(),
@@ -306,7 +310,7 @@ public class Controller {
                     LocalDate.now(),
                     players,
                     winner,
-                    GameSession.GameStatus.PLAYED  // Установка статуса PLAYED
+                    GameSession.GameStatus.IN_PROGRESS  // Установка статуса IN_PROGRESS
             );
 
             // Сохраняем в БД

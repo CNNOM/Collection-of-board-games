@@ -44,11 +44,13 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
     @Override
     public List<GameSession> getGameHistory() {
         return sessionsCollection.find()
+                .sort(Sorts.descending("date"))
                 .into(new ArrayList<>())
                 .stream()
                 .map(this::documentToGameSession)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public void addGame(BoardGame game) {
