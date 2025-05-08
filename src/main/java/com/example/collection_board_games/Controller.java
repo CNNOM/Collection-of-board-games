@@ -302,7 +302,8 @@ public class Controller {
                     game.getName(),
                     LocalDate.now(),
                     players,
-                    winner
+                    winner,
+                    GameSession.GameStatus.PLAYED  // Установка статуса PLAYED
             );
 
             // Сохраняем в БД
