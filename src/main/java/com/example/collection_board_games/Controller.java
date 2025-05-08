@@ -54,7 +54,6 @@ public class Controller {
 
         gameHistory = boardGameDao.getGameHistory();
         allGames = boardGameDao.getAllGames();
-        gameHistory = boardGameDao.getGameHistory();
 
         gamesComboBox.setItems(FXCollections.observableArrayList(
                 allGames.stream().map(BoardGame::getName).collect(Collectors.toList()))

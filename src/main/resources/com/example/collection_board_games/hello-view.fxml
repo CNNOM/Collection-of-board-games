@@ -243,6 +243,7 @@
         <Label text="Источник данных:" style="-fx-font-weight: bold;"/>
         <RadioButton text="MongoDB" toggleGroup="$dataSourceToggleGroup" selected="true" userData="mongodb"/>
         <RadioButton text="JSON" toggleGroup="$dataSourceToggleGroup" userData="json"/>
+        <RadioButton text="Memory" toggleGroup="$dataSourceToggleGroup" userData="memory"/>
         <Button text="Применить" onAction="#changeDataSource"/>
     </HBox>
 

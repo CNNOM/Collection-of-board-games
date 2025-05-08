@@ -3,8 +3,8 @@ package com.example.collection_board_games.dao;
 public class DaoFactory {
     public static BoardGameDao createTaskDao(String type) {
         switch (type.toLowerCase()) {
-//            case "memory":
-//                return new BoardGameDaoMemoryImpl();
+            case "memory":
+                return new BoardGameDaoMemoryImpl();
             case "mongodb":
                 return new BoardGameDaoMongoImpl(
                         "mongodb://localhost:27017/board_games",
