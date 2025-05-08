@@ -157,6 +157,25 @@
             <Tab text="Сыгранные игры">
                 <content>
                     <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                        <!-- Фильтры -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Фильтр по дате:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="fromDatePicker" promptText="С"/>
+                            <DatePicker fx:id="toDatePicker" promptText="По"/>
+
+                            <Label text="Игра:" style="-fx-font-weight: bold; -fx-padding: 0 0 0 20;"/>
+                            <ComboBox fx:id="filterGameComboBox" promptText="Все игры" prefWidth="200"/>
+
+                            <Label text="Статус:" style="-fx-font-weight: bold; -fx-padding: 0 0 0 20;"/>
+                            <ComboBox fx:id="filterStatusComboBox" promptText="Все статусы"/>
+
+                            <Button text="Применить фильтр" onAction="#applyPlayedGamesFilter"
+                                    style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
+                            <Button text="Сбросить фильтр" onAction="#resetPlayedGamesFilter"
+                                    style="-fx-font-size: 14px; -fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 10;"/>
+                        </HBox>
+
+                        <!-- Остальная часть вкладки (существующие элементы) -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label text="Выберите игру:" style="-fx-font-weight: bold;"/>
                             <ComboBox fx:id="playedGameComboBox" prefWidth="200" style="-fx-font-size: 14px;"/>
@@ -172,7 +191,6 @@
                             <Button text="Редактировать статусы" onAction="#editGameStatuses"
                                     style="-fx-font-size: 14px; -fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 15; -fx-background-radius: 5; -fx-margin: 0 0 0 20;"/>
                         </HBox>
-
 
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label text="Игроки (через запятую):" style="-fx-font-weight: bold;"/>
@@ -208,7 +226,6 @@
                                 </TableColumn>
                             </columns>
                         </TableView>
-
 
                         <Label fx:id="playedGamesStatusLabel" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
                     </VBox>

@@ -40,6 +40,11 @@ public class Controller {
     @FXML private TableView<GameSession> playedGamesTable;
     @FXML private Label playedGamesStatusLabel;
 
+    @FXML private DatePicker fromDatePicker;
+    @FXML private DatePicker toDatePicker;
+    @FXML private ComboBox<String> filterGameComboBox;
+    @FXML private ComboBox<GameSession.GameStatus> filterStatusComboBox;
+
     @FXML
     public void initialize() {
         boardGameDao = DaoFactory.createTaskDao("mongodb");
@@ -47,8 +52,8 @@ public class Controller {
         gameHistory = boardGameDao.getGameHistory();
 
         gamesComboBox.setItems(FXCollections.observableArrayList(
-                allGames.stream().map(BoardGame::getName).collect(Collectors.toList())
-        ));
+                allGames.stream().map(BoardGame::getName).collect(Collectors.toList()))
+        );
 
         ObservableList<String> categories = FXCollections.observableArrayList(
                 "Стратегия",
@@ -69,6 +74,17 @@ public class Controller {
                 allGames.stream().map(BoardGame::getName).collect(Collectors.toList())
         ));
 
+        // Инициализация фильтров
+        filterGameComboBox.setItems(FXCollections.observableArrayList(
+                allGames.stream().map(BoardGame::getName).collect(Collectors.toList())
+        ));
+        filterGameComboBox.getItems().add(0, "Все игры");
+        filterGameComboBox.getSelectionModel().selectFirst();
+
+        filterStatusComboBox.setItems(FXCollections.observableArrayList(GameSession.GameStatus.values()));
+        filterStatusComboBox.getItems().add(0, null);
+        filterStatusComboBox.getSelectionModel().selectFirst();
+
         // Загрузка истории игр
         loadPlayedGames();
 
@@ -76,15 +92,14 @@ public class Controller {
         updateGameStatuses();
     }
 
+    // Обновите метод loadPlayedGames()
     private void loadPlayedGames() {
         List<GameSession> sessions = boardGameDao.getGameHistory();
-
-        // Сортировка сессий по дате и времени в порядке убывания
         sessions.sort((s1, s2) -> s2.getDateTime().compareTo(s1.getDateTime()));
-
         playedGamesTable.setItems(FXCollections.observableArrayList(sessions));
+        playedGamesStatusLabel.setText("Всего записей: " + sessions.size());
+        playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
     }
-
 
 
     // Подбор игры для компании
@@ -310,7 +325,7 @@ public class Controller {
                     null,
                     game.getId(),
                     game.getName(),
-                    LocalDateTime.now(),  // Используем LocalDateTime.now()
+                    LocalDateTime.now(),
                     players,
                     winner,
                     GameSession.GameStatus.IN_PROGRESS
@@ -398,6 +413,66 @@ public class Controller {
             showPlayedGamesError("Ошибка при редактировании статуса: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void applyPlayedGamesFilter() {
+        try {
+            List<GameSession> filteredSessions = boardGameDao.getGameHistory();
+
+            // Фильтрация по дате
+            LocalDate fromDate = fromDatePicker.getValue();
+            LocalDate toDate = toDatePicker.getValue();
+
+            if (fromDate != null) {
+                filteredSessions = filteredSessions.stream()
+                        .filter(s -> !s.getDateTime().toLocalDate().isBefore(fromDate))
+                        .collect(Collectors.toList());
+            }
+
+            if (toDate != null) {
+                filteredSessions = filteredSessions.stream()
+                        .filter(s -> !s.getDateTime().toLocalDate().isAfter(toDate))
+                        .collect(Collectors.toList());
+            }
+
+            // Фильтрация по игре
+            String selectedGame = filterGameComboBox.getValue();
+            if (selectedGame != null && !selectedGame.equals("Все игры")) {
+                filteredSessions = filteredSessions.stream()
+                        .filter(s -> s.getGameName().equals(selectedGame))
+                        .collect(Collectors.toList());
+            }
+
+            // Фильтрация по статусу
+            GameSession.GameStatus selectedStatus = filterStatusComboBox.getValue();
+            if (selectedStatus != null) {
+                filteredSessions = filteredSessions.stream()
+                        .filter(s -> s.getStatus() == selectedStatus)
+                        .collect(Collectors.toList());
+            }
+
+            // Сортировка по дате (новые сверху)
+            filteredSessions.sort((s1, s2) -> s2.getDateTime().compareTo(s1.getDateTime()));
+
+            playedGamesTable.setItems(FXCollections.observableArrayList(filteredSessions));
+            playedGamesStatusLabel.setText("Найдено записей: " + filteredSessions.size());
+            playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+
+        } catch (Exception e) {
+            playedGamesStatusLabel.setText("Ошибка фильтрации: " + e.getMessage());
+            playedGamesStatusLabel.setStyle("-fx-text-fill: red;");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void resetPlayedGamesFilter() {
+        fromDatePicker.setValue(null);
+        toDatePicker.setValue(null);
+        filterGameComboBox.getSelectionModel().selectFirst();
+        filterStatusComboBox.getSelectionModel().selectFirst();
+        loadPlayedGames();
     }
 
 
