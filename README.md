@@ -8,3 +8,5 @@
 *	Расчет % побед каждого игрока в конкретной игре.
 
 DAO: MongoDB / JSON.
+
+techtask.md(https://github.com/CNNOM/Collection-of-board-games/blob/master/techtask.md)
