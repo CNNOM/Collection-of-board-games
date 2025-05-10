@@ -9,4 +9,4 @@
 
 DAO: MongoDB / JSON.
 
-techtask.md(https://github.com/CNNOM/Collection-of-board-games/blob/master/techtask.md)
+[techtask.md](https://github.com/CNNOM/Collection-of-board-games/blob/master/techtask.md)
