@@ -22,7 +22,6 @@ public class GameSession {
     // Пустой конструктор для Jackson
     public GameSession() {}
 
-    // Основной конструктор (можно использовать @JsonCreator, если хотите только его)
     @JsonCreator
     public GameSession(
             @JsonProperty("id") String id,
