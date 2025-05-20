@@ -48,6 +48,11 @@ public class GameSession {
     public GameStatus getStatus() { return status; }
 
     public void setId(String id) { this.id = id; }
+    public void setGameId(String gameId) { this.gameId = gameId; }
+    public void setGameName(String gameName) { this.gameName = gameName; }
+    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+    public void setPlayers(List<String> players) { this.players = players; }
+    public void setWinner(String winner) { this.winner = winner; }
     public void setStatus(GameStatus status) { this.status = status; }
 
     public String getPlayersAsString() {

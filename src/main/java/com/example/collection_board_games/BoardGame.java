@@ -43,6 +43,12 @@ public class BoardGame {
 
     // Сеттеры
     public void setId(String id) { this.id.set(id); }
+    public void setName(String name) { this.name.set(name); }
+    public void setDescription(String description) { this.description.set(description); }
+    public void setCategory(String category) { this.category.set(category); }
+    public void setMinPlayers(int minPlayers) { this.minPlayers.set(minPlayers); }
+    public void setMaxPlayers(int maxPlayers) { this.maxPlayers.set(maxPlayers); }
+    public void setAverageTime(int averageTime) { this.averageTime.set(averageTime); }
 
     @Override
     public String toString() {
