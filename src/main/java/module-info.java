@@ -24,5 +24,7 @@ module com.example.collection_board_games {
     exports com.example.collection_board_games;
     exports com.example.collection_board_games.dao;
     opens com.example.collection_board_games.dao to javafx.fxml;
+    exports com.example.collection_board_games.game_controller;
+    opens com.example.collection_board_games.game_controller to javafx.fxml;
 
 }

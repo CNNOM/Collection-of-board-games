@@ -1,5 +1,7 @@
-package com.example.collection_board_games;
+package com.example.collection_board_games.game_controller;
 
+import com.example.collection_board_games.BoardGame;
+import com.example.collection_board_games.GameSession;
 import com.example.collection_board_games.dao.BoardGameDao;
 
 import java.time.LocalDate;

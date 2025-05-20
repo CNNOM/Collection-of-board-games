@@ -2,12 +2,15 @@ package com.example.collection_board_games;
 
 import com.example.collection_board_games.dao.BoardGameDao;
 import com.example.collection_board_games.dao.DaoFactory;
+import com.example.collection_board_games.game_controller.GameFilterManager;
+import com.example.collection_board_games.game_controller.GameManager;
+import com.example.collection_board_games.game_controller.GameSessionManager;
+import com.example.collection_board_games.game_controller.UIManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,7 @@ public class Controller {
     private GameManager gameManager;
     private GameSessionManager gameSessionManager;
     private GameFilterManager gameFilterManager;
+    private UIManager uiManager;
 
     @FXML
     public void initialize() {
@@ -48,10 +52,9 @@ public class Controller {
         gameManager = new GameManager(boardGameDao);
         gameSessionManager = new GameSessionManager(boardGameDao);
         gameFilterManager = new GameFilterManager(boardGameDao);
+        uiManager = new UIManager(gamesComboBox, winStatsTable, addGameStatusLabel, playedGamesStatusLabel, playedGamesTable, gameManager);
 
-        gamesComboBox.setItems(FXCollections.observableArrayList(
-                gameManager.getAllGames().stream().map(BoardGame::getName).collect(Collectors.toList()))
-        );
+        uiManager.updateGamesComboBox();
 
         ObservableList<String> categories = FXCollections.observableArrayList(
                 "Стратегия",
@@ -131,7 +134,7 @@ public class Controller {
 
         statsList.sort((s1, s2) -> Integer.compare(s2.getWins(), s1.getWins()));
 
-        winStatsTable.setItems(statsList);
+        uiManager.updateWinStatsTable(statsList);
     }
 
     @FXML
@@ -146,17 +149,13 @@ public class Controller {
                     avgTimeSpinner.getValue()
             );
 
-            gamesComboBox.setItems(FXCollections.observableArrayList(
-                    gameManager.getAllGames().stream().map(BoardGame::getName).collect(Collectors.toList()))
-            );
+            uiManager.updateGamesComboBox();
 
             clearAddGameForm();
-            addGameStatusLabel.setText("Игра успешно добавлена!");
-            addGameStatusLabel.setStyle("-fx-text-fill: green;");
+            uiManager.setAddGameStatus("Игра успешно добавлена!", "-fx-text-fill: green;");
 
         } catch (Exception e) {
-            addGameStatusLabel.setText("Ошибка при добавлении игры: " + e.getMessage());
-            addGameStatusLabel.setStyle("-fx-text-fill: red;");
+            uiManager.setAddGameStatus("Ошибка при добавлении игры: " + e.getMessage(), "-fx-text-fill: red;");
             e.printStackTrace();
         }
     }
@@ -188,18 +187,12 @@ public class Controller {
 
             winnerField.clear();
             playersField.clear();
-            playedGamesStatusLabel.setText("Игра успешно добавлена в историю!");
-            playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+            uiManager.setPlayedGamesStatus("Игра успешно добавлена в историю!", "-fx-text-fill: green;");
 
         } catch (Exception e) {
-            showPlayedGamesError("Ошибка: " + e.getMessage());
+            uiManager.setPlayedGamesStatus("Ошибка: " + e.getMessage(), "-fx-text-fill: red;");
             e.printStackTrace();
         }
-    }
-
-    private void showPlayedGamesError(String message) {
-        playedGamesStatusLabel.setText(message);
-        playedGamesStatusLabel.setStyle("-fx-text-fill: red;");
     }
 
     @FXML
@@ -207,10 +200,9 @@ public class Controller {
         try {
             gameSessionManager.updateGameStatuses();
             loadPlayedGames();
-            playedGamesStatusLabel.setText("Статусы игр успешно обновлены!");
-            playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+            uiManager.setPlayedGamesStatus("Статусы игр успешно обновлены!", "-fx-text-fill: green;");
         } catch (Exception e) {
-            showPlayedGamesError("Ошибка при обновлении статусов: " + e.getMessage());
+            uiManager.setPlayedGamesStatus("Ошибка при обновлении статусов: " + e.getMessage(), "-fx-text-fill: red;");
             e.printStackTrace();
         }
     }
@@ -220,7 +212,7 @@ public class Controller {
         try {
             GameSession selectedSession = playedGamesTable.getSelectionModel().getSelectedItem();
             if (selectedSession == null) {
-                showPlayedGamesError("Выберите сессию для редактирования");
+                uiManager.setPlayedGamesStatus("Выберите сессию для редактирования", "-fx-text-fill: red;");
                 return;
             }
 
@@ -233,11 +225,10 @@ public class Controller {
             if (result.isPresent()) {
                 gameSessionManager.editGameStatus(selectedSession, result.get());
                 loadPlayedGames();
-                playedGamesStatusLabel.setText("Статус сессии успешно обновлен!");
-                playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+                uiManager.setPlayedGamesStatus("Статус сессии успешно обновлен!", "-fx-text-fill: green;");
             }
         } catch (Exception e) {
-            showPlayedGamesError("Ошибка при редактировании статуса: " + e.getMessage());
+            uiManager.setPlayedGamesStatus("Ошибка при редактировании статуса: " + e.getMessage(), "-fx-text-fill: red;");
             e.printStackTrace();
         }
     }
@@ -252,12 +243,9 @@ public class Controller {
 
             List<GameSession> filteredSessions = gameFilterManager.applyFilter(fromDate, toDate, selectedGame, selectedStatus);
 
-            playedGamesTable.setItems(FXCollections.observableArrayList(filteredSessions));
-            playedGamesStatusLabel.setText("Найдено записей: " + filteredSessions.size());
-            playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+            uiManager.updatePlayedGamesTable(filteredSessions);
         } catch (Exception e) {
-            playedGamesStatusLabel.setText("Ошибка фильтрации: " + e.getMessage());
-            playedGamesStatusLabel.setStyle("-fx-text-fill: red;");
+            uiManager.setPlayedGamesStatus("Ошибка фильтрации: " + e.getMessage(), "-fx-text-fill: red;");
             e.printStackTrace();
         }
     }
@@ -279,6 +267,7 @@ public class Controller {
             gameManager = new GameManager(boardGameDao);
             gameSessionManager = new GameSessionManager(boardGameDao);
             gameFilterManager = new GameFilterManager(boardGameDao);
+            uiManager = new UIManager(gamesComboBox, winStatsTable, addGameStatusLabel, playedGamesStatusLabel, playedGamesTable, gameManager);
 
             reloadAllData();
 
@@ -292,9 +281,7 @@ public class Controller {
     }
 
     private void reloadAllData() {
-        gamesComboBox.setItems(FXCollections.observableArrayList(
-                gameManager.getAllGames().stream().map(BoardGame::getName).collect(Collectors.toList()))
-        );
+        uiManager.updateGamesComboBox();
 
         playedGameComboBox.setItems(FXCollections.observableArrayList(
                 gameManager.getAllGames().stream().map(BoardGame::getName).collect(Collectors.toList()))
@@ -312,10 +299,7 @@ public class Controller {
 
     private void loadPlayedGames() {
         List<GameSession> sessions = gameSessionManager.getGameHistory();
-        sessions.sort((s1, s2) -> s2.getDateTime().compareTo(s1.getDateTime()));
-        playedGamesTable.setItems(FXCollections.observableArrayList(sessions));
-        playedGamesStatusLabel.setText("Всего записей: " + sessions.size());
-        playedGamesStatusLabel.setStyle("-fx-text-fill: green;");
+        uiManager.updatePlayedGamesTable(sessions);
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
@@ -324,24 +308,5 @@ public class Controller {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    public static class PlayerStats {
-        private final String playerName;
-        private int wins;
-        private int totalGames;
-        private double winPercentage;
-
-        public PlayerStats(String playerName) {
-            this.playerName = playerName;
-        }
-
-        public String getPlayerName() { return playerName; }
-        public int getWins() { return wins; }
-        public void setWins(int wins) { this.wins = wins; }
-        public int getTotalGames() { return totalGames; }
-        public void setTotalGames(int totalGames) { this.totalGames = totalGames; }
-        public double getWinPercentage() { return winPercentage; }
-        public void setWinPercentage(double winPercentage) { this.winPercentage = winPercentage; }
     }
 }
