@@ -6,11 +6,10 @@ import java.util.List;
 
 public interface BoardGameDao extends AutoCloseable {
     List<BoardGame> getAllGames();
-    void addGame(BoardGame game);
-
     List<GameSession> getGameHistory();
+
+    void addGame(BoardGame game);
     void addGameSession(GameSession session);
     void updateGameSessionStatus(GameSession session);
-
     void close();
 }

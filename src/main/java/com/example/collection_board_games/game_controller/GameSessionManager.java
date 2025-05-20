@@ -10,12 +10,12 @@ import java.util.List;
 public class GameSessionManager {
     private BoardGameDao boardGameDao;
     private List<GameSession> gameHistory;
-    private List<BoardGame> allGames; // Добавлен список игр
+    private List<BoardGame> allGames;
 
     public GameSessionManager(BoardGameDao boardGameDao) {
         this.boardGameDao = boardGameDao;
         this.gameHistory = boardGameDao.getGameHistory();
-        this.allGames = boardGameDao.getAllGames(); // Инициализация списка игр
+        this.allGames = boardGameDao.getAllGames();
     }
 
     public void addPlayedGame(String gameName, String winner, List<String> players) {

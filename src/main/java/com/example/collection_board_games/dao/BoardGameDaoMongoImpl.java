@@ -71,7 +71,7 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
         Document doc = new Document()
                 .append("gameId", session.getGameId())
                 .append("gameName", session.getGameName())
-                .append("date", date)  // Сохраняем дату и время
+                .append("date", date)
                 .append("players", playersString)
                 .append("winner", session.getWinner())
                 .append("status", session.getStatus().toString());
