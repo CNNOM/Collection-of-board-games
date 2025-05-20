@@ -17,6 +17,8 @@ module com.example.collection_board_games {
     requires javafx.base;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
+    requires telegrambots;
+    requires telegrambots.meta;
 
     opens com.example.collection_board_games to javafx.fxml, com.fasterxml.jackson.databind;
     exports com.example.collection_board_games;

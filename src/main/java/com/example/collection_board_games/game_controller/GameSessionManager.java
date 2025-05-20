@@ -7,6 +7,8 @@ import com.example.collection_board_games.dao.BoardGameDao;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 public class GameSessionManager {
     private BoardGameDao boardGameDao;
     private List<GameSession> gameHistory;
@@ -70,6 +72,13 @@ public class GameSessionManager {
 
     public List<GameSession> getGameHistory() {
         return gameHistory;
+    }
+
+    public GameSession getGameSessionById(String sessionId) {
+        return gameHistory.stream()
+                .filter(session -> session.getId().equals(sessionId))
+                .findFirst()
+                .orElse(null);
     }
 
     private BoardGame findGameByName(String gameName) {

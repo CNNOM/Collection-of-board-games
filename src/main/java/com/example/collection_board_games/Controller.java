@@ -1,5 +1,6 @@
 package com.example.collection_board_games;
 
+import com.example.collection_board_games.bot.BoardGameTelegramBot;
 import com.example.collection_board_games.dao.BoardGameDao;
 import com.example.collection_board_games.dao.DaoFactory;
 import com.example.collection_board_games.game_controller.GameFilterManager;
@@ -10,11 +11,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Controller {
+    private static final String BOT_TOKEN = "7978010225:AAGIC6g0LSgsdUzXfVwhMjL9N3DX2E3RfdU";
+    private static final String BOT_USERNAME = "CollectionBoardGames_bot";
+
     @FXML private ComboBox<String> gamesComboBox;
     @FXML private TableView<PlayerStats> winStatsTable;
 
@@ -45,15 +53,24 @@ public class Controller {
     private GameSessionManager gameSessionManager;
     private GameFilterManager gameFilterManager;
     private UIManager uiManager;
+    private BoardGameTelegramBot telegramBot;
 
     @FXML
     public void initialize() {
+        initializeDaoAndManagers();
+        initializeUIComponents();
+        initializeTelegramBot();
+    }
+
+    private void initializeDaoAndManagers() {
         boardGameDao = DaoFactory.createTaskDao("mongodb");
         gameManager = new GameManager(boardGameDao);
         gameSessionManager = new GameSessionManager(boardGameDao);
         gameFilterManager = new GameFilterManager(boardGameDao);
         uiManager = new UIManager(gamesComboBox, winStatsTable, addGameStatusLabel, playedGamesStatusLabel, playedGamesTable, gameManager);
+    }
 
+    private void initializeUIComponents() {
         uiManager.updateGamesComboBox();
 
         ObservableList<String> categories = FXCollections.observableArrayList(
@@ -86,6 +103,17 @@ public class Controller {
 
         loadPlayedGames();
         updateGameStatuses();
+    }
+
+    private void initializeTelegramBot() {
+        telegramBot = new BoardGameTelegramBot(BOT_TOKEN, BOT_USERNAME, this);
+
+        try {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            botsApi.registerBot(telegramBot);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -139,6 +167,8 @@ public class Controller {
     @FXML
     private void addNewGame() {
         try {
+            validateGameInput();
+
             gameManager.addNewGame(
                     gameNameField.getText().trim(),
                     gameDescriptionField.getText().trim(),
@@ -156,6 +186,24 @@ public class Controller {
         } catch (Exception e) {
             uiManager.setAddGameStatus("Ошибка при добавлении игры: " + e.getMessage(), "-fx-text-fill: red;");
             e.printStackTrace();
+        }
+    }
+
+    private void validateGameInput() throws IllegalArgumentException {
+        if (gameNameField.getText().trim().isEmpty()) {
+            throw new IllegalArgumentException("Название игры не может быть пустым.");
+        }
+        if (gameDescriptionField.getText().trim().isEmpty()) {
+            throw new IllegalArgumentException("Описание игры не может быть пустым.");
+        }
+        if (minPlayersSpinner.getValue() <= 0) {
+            throw new IllegalArgumentException("Минимальное количество игроков должно быть больше 0.");
+        }
+        if (maxPlayersSpinner.getValue() <= 0) {
+            throw new IllegalArgumentException("Максимальное количество игроков должно быть больше 0.");
+        }
+        if (avgTimeSpinner.getValue() <= 0) {
+            throw new IllegalArgumentException("Среднее время игры должно быть больше 0.");
         }
     }
 
@@ -308,4 +356,66 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    // Методы для Telegram бота
+    public String showWinStatisticsForBot(String gameName) {
+        List<GameSession> gameSessions = boardGameDao.getGameHistory();
+
+        BoardGame game = gameManager.getAllGames().stream()
+                .filter(g -> g.getName().equals(gameName))
+                .findFirst()
+                .orElse(null);
+
+        if (game == null) {
+            return "Игра не найдена.";
+        }
+
+        List<GameSession> sessions = gameSessions.stream()
+                .filter(session -> session.getGameId().equals(game.getId()))
+                .collect(Collectors.toList());
+
+        if (sessions.isEmpty()) {
+            return "Нет данных о сыгранных играх для " + gameName;
+        }
+
+        Map<String, PlayerStats> statsMap = new HashMap<>();
+
+        for (GameSession session : sessions) {
+            for (String player : session.getPlayers()) {
+                PlayerStats stats = statsMap.computeIfAbsent(player, PlayerStats::new);
+                stats.setTotalGames(stats.getTotalGames() + 1);
+            }
+
+            if (session.getWinner() != null && !session.getWinner().isEmpty()) {
+                PlayerStats winnerStats = statsMap.computeIfAbsent(session.getWinner(), PlayerStats::new);
+                winnerStats.setWins(winnerStats.getWins() + 1);
+            }
+        }
+
+        StringBuilder statsList = new StringBuilder("Статистика побед для игры: " + gameName + "\n");
+        for (PlayerStats stats : statsMap.values()) {
+            if (stats.getTotalGames() > 0) {
+                double winPercentage = (double) stats.getWins() / stats.getTotalGames() * 100;
+                stats.setWinPercentage(Math.round(winPercentage * 100.0) / 100.0);
+            }
+            statsList.append("- ").append(stats.getPlayerName()).append(": ").append(stats.getWins()).append(" побед, ").append(stats.getWinPercentage()).append("%\n");
+        }
+
+        return statsList.toString();
+    }
+
+    public String getAllGamesForBot() {
+        List<BoardGame> games = gameManager.getAllGames();
+        if (games.isEmpty()) {
+            return "Нет доступных игр.";
+        }
+
+        StringBuilder gamesList = new StringBuilder("Список доступных игр:\n");
+        for (BoardGame game : games) {
+            gamesList.append("- ").append(game.getName()).append("\n");
+        }
+
+        return gamesList.toString();
+    }
+
 }
