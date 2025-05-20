@@ -83,48 +83,6 @@ public class BoardGameDaoJsonImpl implements BoardGameDao {
     }
 
     @Override
-    public List<BoardGame> findGamesByPlayersAndTime(int players, int maxTime) {
-        return getAllGames().stream()
-                .filter(game -> game.getMinPlayers() <= players && game.getMaxPlayers() >= players)
-                .filter(game -> game.getAverageTime() <= maxTime)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GameSession> getRecentSessions(int days) {
-        LocalDateTime cutoff = LocalDateTime.now().minusDays(days);
-        return getGameHistory().stream()
-                .filter(session -> session.getDateTime().isAfter(cutoff))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void updateGame(BoardGame updatedGame) {
-        List<BoardGame> games = getAllGames();
-        games = games.stream()
-                .map(game -> game.getId().equals(updatedGame.getId()) ? updatedGame : game)
-                .collect(Collectors.toList());
-        saveGames(games);
-    }
-
-    @Override
-    public void deleteGame(String id) {
-        List<BoardGame> games = getAllGames();
-        games = games.stream()
-                .filter(game -> !game.getId().equals(id))
-                .collect(Collectors.toList());
-        saveGames(games);
-    }
-
-    @Override
-    public BoardGame getGameById(String id) {
-        return getAllGames().stream()
-                .filter(game -> game.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
     public void updateGameSessionStatus(GameSession session) {
         List<GameSession> sessions = getGameHistory();
         sessions = sessions.stream()

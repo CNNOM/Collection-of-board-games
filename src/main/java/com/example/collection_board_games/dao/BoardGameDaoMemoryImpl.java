@@ -37,44 +37,6 @@ public class BoardGameDaoMemoryImpl implements BoardGameDao {
         sessions.add(session);
     }
 
-    @Override
-    public List<BoardGame> findGamesByPlayersAndTime(int players, int maxTime) {
-        return games.stream()
-                .filter(game -> game.getMinPlayers() <= players && game.getMaxPlayers() >= players)
-                .filter(game -> game.getAverageTime() <= maxTime)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GameSession> getRecentSessions(int days) {
-        LocalDateTime cutoff = LocalDateTime.now().minusDays(days);
-        return sessions.stream()
-                .filter(session -> session.getDateTime().isAfter(cutoff))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void updateGame(BoardGame updatedGame) {
-        for (int i = 0; i < games.size(); i++) {
-            if (games.get(i).getId().equals(updatedGame.getId())) {
-                games.set(i, updatedGame);
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void deleteGame(String id) {
-        games.removeIf(game -> game.getId().equals(id));
-    }
-
-    @Override
-    public BoardGame getGameById(String id) {
-        return games.stream()
-                .filter(game -> game.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
 
     @Override
     public void updateGameSessionStatus(GameSession session) {

@@ -82,21 +82,6 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
         sessionsCollection.insertOne(doc);
     }
 
-
-    @Override
-    public List<BoardGame> findGamesByPlayersAndTime(int players, int maxTime) {
-        Bson filter = Filters.and(
-                Filters.lte("minPlayers", players),
-                Filters.gte("maxPlayers", players),
-                Filters.lte("averageTime", maxTime)
-        );
-        return gamesCollection.find(filter)
-                .into(new ArrayList<>())
-                .stream()
-                .map(this::documentToBoardGame)
-                .collect(Collectors.toList());
-    }
-
     @Override
     public void close() {
         mongoClient.close();
@@ -112,43 +97,6 @@ public class BoardGameDaoMongoImpl implements BoardGameDao {
                 doc.getInteger("maxPlayers", 4),
                 doc.getInteger("averageTime", 30)
         );
-    }
-
-    @Override
-    public List<GameSession> getRecentSessions(int days) {
-        LocalDate cutoffDate = LocalDate.now().minusDays(days);
-        Date cutoff = Date.from(cutoffDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        return sessionsCollection.find(Filters.gte("date", cutoff))
-                .sort(Sorts.descending("date"))
-                .into(new ArrayList<>())
-                .stream()
-                .map(this::documentToGameSession)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void updateGame(BoardGame game) {
-        Document update = new Document("$set", new Document()
-                .append("name", game.getName())
-                .append("description", game.getDescription())
-                .append("category", game.getCategory())
-                .append("minPlayers", game.getMinPlayers())
-                .append("maxPlayers", game.getMaxPlayers())
-                .append("averageTime", game.getAverageTime()));
-
-        gamesCollection.updateOne(Filters.eq("_id", new ObjectId(game.getId())), update);
-    }
-
-    @Override
-    public void deleteGame(String id) {
-        gamesCollection.deleteOne(Filters.eq("_id", new ObjectId(id)));
-    }
-
-    @Override
-    public BoardGame getGameById(String id) {
-        Document doc = gamesCollection.find(Filters.eq("_id", new ObjectId(id))).first();
-        return documentToBoardGame(doc);
     }
 
     @Override
