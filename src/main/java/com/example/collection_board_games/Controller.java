@@ -65,7 +65,6 @@ public class Controller {
                 "Карточная",
                 "Для вечеринок",
                 "Абстрактная",
-                "Войнушка",
                 "Ролевая"
         );
         gameCategoryComboBox.setItems(categories);

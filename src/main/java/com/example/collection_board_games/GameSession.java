@@ -19,7 +19,6 @@ public class GameSession {
     private String winner;
     private GameStatus status;
 
-    // Пустой конструктор для Jackson
     public GameSession() {}
 
     @JsonCreator
@@ -40,7 +39,6 @@ public class GameSession {
         this.status = status;
     }
 
-    // Геттеры
     public String getId() { return id; }
     public String getGameId() { return gameId; }
     public String getGameName() { return gameName; }
@@ -49,16 +47,9 @@ public class GameSession {
     public String getWinner() { return winner; }
     public GameStatus getStatus() { return status; }
 
-    // Сеттеры
     public void setId(String id) { this.id = id; }
-    public void setGameId(String gameId) { this.gameId = gameId; }
-    public void setGameName(String gameName) { this.gameName = gameName; }
-    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
-    public void setPlayers(List<String> players) { this.players = players; }
-    public void setWinner(String winner) { this.winner = winner; }
     public void setStatus(GameStatus status) { this.status = status; }
 
-    // Дополнительные методы
     public String getPlayersAsString() {
         return players != null ? String.join(", ", players) : "";
     }

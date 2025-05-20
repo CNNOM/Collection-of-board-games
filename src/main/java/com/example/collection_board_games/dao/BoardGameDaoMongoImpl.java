@@ -9,10 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -21,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BoardGameDaoMongoImpl implements BoardGameDao {
+public class BoardGameDaoMongoImpl implements BoardGameDao, GameSessionDao {
     private final MongoCollection<Document> gamesCollection;
     private final MongoCollection<Document> sessionsCollection;
     private final MongoClient mongoClient;

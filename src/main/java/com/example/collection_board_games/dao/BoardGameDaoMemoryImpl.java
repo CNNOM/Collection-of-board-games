@@ -3,11 +3,9 @@ package com.example.collection_board_games.dao;
 import com.example.collection_board_games.BoardGame;
 import com.example.collection_board_games.GameSession;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class BoardGameDaoMemoryImpl implements BoardGameDao {
+public class BoardGameDaoMemoryImpl implements BoardGameDao, GameSessionDao {
     private final List<BoardGame> games = new ArrayList<>();
     private final List<GameSession> sessions = new ArrayList<>();
 

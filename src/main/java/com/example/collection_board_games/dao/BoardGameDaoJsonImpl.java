@@ -2,29 +2,26 @@ package com.example.collection_board_games.dao;
 
 import com.example.collection_board_games.BoardGame;
 import com.example.collection_board_games.GameSession;
-import com.example.collection_board_games.GameSession.GameStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BoardGameDaoJsonImpl implements BoardGameDao {
+public class BoardGameDaoJsonImpl implements BoardGameDao, GameSessionDao {
     private final ObjectMapper objectMapper;
     private final File gamesFile;
     private final File sessionsFile;
 
     public BoardGameDaoJsonImpl(String basePath) {
         this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule()); // Для поддержки LocalDateTime
+        this.objectMapper.registerModule(new JavaTimeModule());
 
-        // Создаем директорию, если она не существует
         File dataDir = new File(basePath);
         if (!dataDir.exists()) {
             dataDir.mkdirs();
@@ -93,7 +90,6 @@ public class BoardGameDaoJsonImpl implements BoardGameDao {
 
     @Override
     public void close() {
-        // Ничего не нужно делать для JSON реализации
     }
 
     private void saveGames(List<BoardGame> games) {
