@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BoardGameDaoJsonImpl implements BoardGameDao, GameSessionDao {
+public class BoardGameDaoJsonImpl implements BoardGameDao {
     private final ObjectMapper objectMapper;
     private final File gamesFile;
     private final File sessionsFile;

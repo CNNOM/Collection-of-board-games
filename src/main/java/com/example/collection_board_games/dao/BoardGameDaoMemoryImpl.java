@@ -5,7 +5,7 @@ import com.example.collection_board_games.GameSession;
 
 import java.util.*;
 
-public class BoardGameDaoMemoryImpl implements BoardGameDao, GameSessionDao {
+public class BoardGameDaoMemoryImpl implements BoardGameDao {
     private final List<BoardGame> games = new ArrayList<>();
     private final List<GameSession> sessions = new ArrayList<>();
 

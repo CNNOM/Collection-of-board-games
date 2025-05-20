@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BoardGameDaoMongoImpl implements BoardGameDao, GameSessionDao {
+public class BoardGameDaoMongoImpl implements BoardGameDao {
     private final MongoCollection<Document> gamesCollection;
     private final MongoCollection<Document> sessionsCollection;
     private final MongoClient mongoClient;
